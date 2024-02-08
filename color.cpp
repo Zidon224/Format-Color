@@ -16,6 +16,8 @@ int main(int argc, char *argv[])
     #ifdef _WIN32
         SetTerminal(); //Setting up the terminal in order to use ansi escape codes for handling text colors in the terminal on windows.
     #endif
-    if(argc == 1) Err("Atleast 1 argument is required!");
-    clipp::parse(argc, argv, CLI_opt);
+    if(clipp::parse(argc, argv, CLI_opt))
+        std::cout << "Required args: true\n";
+    else
+        Err("No input or ouutput color formats are specified!");
 }
