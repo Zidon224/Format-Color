@@ -19,5 +19,5 @@ int main(int argc, char *argv[])
     if(clipp::parse(argc, argv, CLI_opt))
         std::cout << "Required args: true\n";
     else
-        Err("No input or ouutput color formats are specified!");
+        Err("No input or output color formats are specified!");
 }
