@@ -1,6 +1,6 @@
 //This file contains the commands, arguments and the functions used for color conversion.
 
-
+#pragma once
 
 
 #include <iostream>
@@ -31,7 +31,7 @@ auto CLI_opt = (
     clipp::option("-v", "--version")([]{std::cout << "Version: " << Ver << "\n";}),
     clipp::option("-sl", "--show_license")([]{std::cout << Licenses;}),
     clipp::option("-scf", "--show_color_fmts")([]{std::cout << ColorFMTs;}),
-    clipp::option("-icf:", "--in_color_fmt:") & clipp::value("in color fmt", colorFMTIn)([]{
+    (clipp::required("-icf:", "--in_color_fmt:") & clipp::value("in color fmt", colorFMTIn)([]{
         #ifdef CLIdebug
             std::cout << "[In Color fmt]\n";
         #endif
@@ -50,8 +50,8 @@ auto CLI_opt = (
             Err("Unknown input color format!");
             std::cout << "'" << colorFMTIn << "'\n";
         }
-    }),
-    clipp::option("-ocf:", "--out_color_fmt:") & clipp::value("out color format", colorFMTout)([]{
+    })),
+    (clipp::required("-ocf:", "--out_color_fmt:") & clipp::value("out color format", colorFMTout)([]{
         #ifdef CLIdebug
             std::cout << "[Output Color Fmt]\n";
         #endif
@@ -66,7 +66,7 @@ auto CLI_opt = (
             Err("Unknown output color format!");
             std::cout << "'" << colorFMTout << "'\n";
         }
-    }),
+    })),
     clipp::option("-fi", "--file_in") & clipp::value("input file", inFile)([]{
         #ifdef CLIdebug
             std::cout << "[File Input]\n";
