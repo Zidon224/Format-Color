@@ -21,6 +21,7 @@ std::string inFile; //For input color array from file
 std::string outFile; //For exporting the converted color array into a file
 std::string colorFMTIn;
 std::string colorFMTout;
+std::string inColor;
 //bool isIcf = true;
 
 
@@ -30,6 +31,7 @@ auto CLI_opt = (
     clipp::option("-h", "--help")([]{std::cout << fullHelp;}),
     clipp::option("-v", "--version")([]{std::cout << "Version: " << Ver << "\n";}),
     clipp::option("-sl", "--show_license")([]{std::cout << Licenses;}),
+    clipp::option("-inf", "--info")([]{std::cout << FullInfo;}),
     clipp::option("-scf", "--show_color_fmts")([]{std::cout << ColorFMTs;}),
     clipp::option("-fi", "--file_in") & clipp::value("input file", inFile)([]{
         #ifdef CLIdebug
@@ -66,20 +68,21 @@ auto CLI_opt = (
             std::cout << "[User Interface]\n";
         #endif
     }),
-    clipp::option("-icf:", "--in_color_fmt:") & clipp::value("in color fmt", colorFMTIn)([]{
+    //& clipp::value("inColor", inColor)
+    clipp::required("-icf:", "--in_color_fmt:") & clipp::value("in color fmt", colorFMTIn) & clipp::value("inColor", inColor)([]{
         #ifdef CLIdebug
             std::cout << "[In Color fmt]\n";
         #endif
-        if(colorFMTIn.find("RGB") != std::string::npos)
+        if(colorFMTIn.find("RGB=") != std::string::npos)
         {
             std::cout << "Input Color Format: RGB\n";
         }
-        else if(colorFMTIn.find("HSL") != std::string::npos)
+        else if(colorFMTIn.find("HSL=") != std::string::npos)
         {
             std::cout << "Input Color Format: HSL\n";
             
         }
-        else if(colorFMTIn.find("HEX") != std::string::npos)
+        else if(colorFMTIn.find("HEX=") != std::string::npos)
         {
             std::cout << "Input Color Format: HEX\n";
             
@@ -89,8 +92,9 @@ auto CLI_opt = (
             Err("Unknown input color format!");
             std::cout << "'" << colorFMTIn << "'\n";
         }
+        std::cout << "Color entered: " << inColor << "\n";
     }),
-    clipp::option("-ocf:", "--out_color_fmt:") & clipp::value("out color format", colorFMTout)([]{
+    clipp::required("-ocf:", "--out_color_fmt:") & clipp::value("out color format", colorFMTout)([]{
         #ifdef CLIdebug
             std::cout << "[Output Color Fmt]\n";
         #endif
