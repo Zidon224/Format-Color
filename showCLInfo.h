@@ -31,7 +31,7 @@ std::string fullHelp =
 "-icf:               RGB, HSL, HEX     Yes                      Input color format specification\n"
 "-ocf:               RGB, HSL, HEX     Yes                      Output color format\n"
 "Important notice!!! all color formats must end with '=' (Example: -icf: RGB= '<RGB color>'\n"
-"This also applies to output color format\n"
+"This only applies to input color format\n"
 "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
 "-vc | --view_color                    (Optional)               Prints a bar with the input color to STD Output\n"
 "-fi | --file_input  <file/path>       (optional)               Reads an array of colors stored into a text file\n"
