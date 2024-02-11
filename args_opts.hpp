@@ -11,11 +11,16 @@
 #include "ext_deps/clipp.h"
 #include "file_utils.h"
 
+//#define CLIdebug
+#define DevMode
+
+#ifdef DevMode
+    #include "conv_tests.h"
+#endif
 
 
 #define Ver "1.0.0"
-//#define CLIdebug
-//#define DevMode
+
 
 std::string inFile; //For input color array from file
 std::string outFile; //For exporting the converted color array into a file
@@ -33,6 +38,9 @@ auto CLI_opt = (
     clipp::option("-sl", "--show_license")([]{std::cout << Licenses;}),
     clipp::option("-inf", "--info")([]{std::cout << FullInfo;}),
     clipp::option("-scf", "--show_color_fmts")([]{std::cout << ColorFMTs;}),
+    #ifdef DevMode
+        clipp::option("-a")([]{convertTests();}), //Test the color conversion from conv_tests.h
+    #endif
     clipp::option("-fi", "--file_in") & clipp::value("input file", inFile)([]{
         #ifdef CLIdebug
             std::cout << "[File Input]\n";
