@@ -7,11 +7,11 @@
 
 
 
-char HEX_VAL[] = "0123456789ABCDEF";
+//char HEX_VAL[] = "0123456789ABCDEF";
 
 
 
-static int CharIndex(char *str, char c)
+static int CharIndex(char* str, char c)
 {
     char *i = strchr(str, c);
     return i != NULL ? i - str : -1;
@@ -19,17 +19,17 @@ static int CharIndex(char *str, char c)
 
 void printRGB(RGB rgb)
 {
-    printf("RGB: %d | %d | %d\n", rgb.R, rgb.G, rgb.B);
+    printf("Converted RGB: %d | %d | %d\n", rgb.R, rgb.G, rgb.B);
 }
 
 void printRGBH(RGB_Hex rgbh)
 {
-    printf("HEX: #%s%s%s\n", rgbh.R, rgbh.G, rgbh.B);
+    printf("Converted HEX: #%s%s%s\n", rgbh.R, rgbh.G, rgbh.B);
 }
 
 void printHSL(HSL hsl)
 {
-    printf("HSL: %d | %4.2lf%% | %4.2lf%%\n", hsl.H, hsl.S, hsl.L);
+    printf("Converted HSL: %d | %4.2lf | %4.2lf\n", hsl.H, hsl.S, hsl.L);
 }
 
 void combHEX(RGB_Hex rgbh, char *comb)
@@ -78,15 +78,18 @@ bool checkHSL(HSL hsl)
     return true;
 }
 
-void HEX2RGB(RGB_Hex rgbh, RGB *rgb)
+void HEX2RGB(RGB_Hex rgbh, RGB* rgb)
 {
-    rgb -> R = CharIndex(HEX_VAL, toupper(rgbh.R[1])) + CharIndex(HEX_VAL, toupper(rgbh.R[0]) * 16);
-    rgb -> G = CharIndex(HEX_VAL, toupper(rgbh.G[1])) + CharIndex(HEX_VAL, toupper(rgbh.G[0]) * 16);
-    rgb -> B = CharIndex(HEX_VAL, toupper(rgbh.B[1])) + CharIndex(HEX_VAL, toupper(rgbh.B[0]) * 16);
+    char HEX_VAL[] = "0123456789ABCDEF";
+
+    rgb -> R = CharIndex(HEX_VAL, toupper(rgbh.R[1])) + (CharIndex(HEX_VAL, toupper(rgbh.R[0])) * 16);
+    rgb -> G = CharIndex(HEX_VAL, toupper(rgbh.G[1])) + (CharIndex(HEX_VAL, toupper(rgbh.G[0])) * 16);
+    rgb -> B = CharIndex(HEX_VAL, toupper(rgbh.B[1])) + (CharIndex(HEX_VAL, toupper(rgbh.B[0])) * 16);
 }
 
 void RGB2HEX(RGB rgb, RGB_Hex *rgbh)
 {
+    char HEX_VAL[] = "0123456789ABCDEF";
     int i0;
     int i1;
 
@@ -114,7 +117,7 @@ void RGB2HEX(RGB rgb, RGB_Hex *rgbh)
     rgbh -> B[2] = '\0';
 }
 
-void RGB2HSL(RGB rgb, HSL *hsl)
+void RGB2HSL(RGB rgb, HSL* hsl)
 {
     hsl -> H = (int) procHue(rgb);
     hsl -> S = procLight(rgb);
