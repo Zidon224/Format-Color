@@ -37,15 +37,4 @@ int main(int argc, char *argv[])
     //To do: 
     //- more color conversion tests
     //- get assigned values from the CLI parameters into the conversion functions
-
-    RGB rgb;
-
-    rgb.R = 255;
-    rgb.G = 48;
-    rgb.B = 100;
-    RGB_Hex rgbh;
-
-    RGB2HEX(rgb, &rgbh);
-
-    printRGBH(rgbh);
 }
