@@ -10,6 +10,7 @@
 #include "showCLInfo.h"
 #include "ext_deps/clipp.h"
 #include "file_utils.h"
+#include "CLI_Proc.h"
 
 //#define CLIdebug
 #define DevMode
@@ -39,7 +40,7 @@ auto CLI_opt = (
     clipp::option("-inf", "--info")([]{std::cout << FullInfo;}),
     clipp::option("-scf", "--show_color_fmts")([]{std::cout << ColorFMTs;}),
     #ifdef DevMode
-        clipp::option("-a")([]{convertTests();}), //Test the color conversion from conv_tests.h
+        clipp::option("-a")([]{convertTests();}),
     #endif
     clipp::option("-fi", "--file_in") & clipp::value("input file", inFile)([]{
         #ifdef CLIdebug
@@ -84,6 +85,13 @@ auto CLI_opt = (
         if(colorFMTIn.find("RGB=") != std::string::npos)
         {
             std::cout << "Input Color Format: RGB\n";
+            char strSep = ' ';
+            stringSplit(inColor, strSep);
+            std::cout << "Splited rgb values: \n";
+            for(int i = 0; i < MAX_STR_LEN; i++)
+            {
+                std::cout << "RGB INPUT: " << ICF_str[i] << "\n";
+            }
         }
         else if(colorFMTIn.find("HSL=") != std::string::npos)
         {
@@ -100,7 +108,7 @@ auto CLI_opt = (
             Err("Unknown input color format!");
             std::cout << "'" << colorFMTIn << "'\n";
         }
-        std::cout << "Color entered: " << inColor << "\n";
+        //std::cout << "Color entered: " << inColor << "\n";
     }),
     clipp::required("-ocf:", "--out_color_fmt:") & clipp::value("out color format", colorFMTout)([]{
         #ifdef CLIdebug
