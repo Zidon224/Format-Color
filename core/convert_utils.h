@@ -211,3 +211,10 @@ void HSL2RGB(HSL hsl, RGB *rgb)
             rgb -> B = round(temp2 * 255.0);
     }
 }
+
+void HSL2HEX(HSL hsl, RGB_Hex *rgbh)
+{
+    RGB rgb;
+    HSL2RGB(hsl, &rgb);
+    RGB2HEX(rgb, rgbh);
+}
