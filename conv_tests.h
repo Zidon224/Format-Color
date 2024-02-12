@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "core/convert_utils.h"
+#include "core/color_defs.h"
 
 
 
@@ -20,9 +21,9 @@ void convertTests()
     HSL hslIN;
     //HSL hslIN2;
 
-    hslIN.H = 104;
-    hslIN.S = 226;
-    hslIN.L = 122;
+    hslIN.H = 50;
+    hslIN.S = 200.9;
+    hslIN.L = 30.90;
 
     RGB_Hex rgbhIN;
     RGB_Hex rgbhOUT;
