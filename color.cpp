@@ -8,7 +8,7 @@
 #include "debug.h"
 #include "ext_deps/clipp.h"
 #include "args_opts.hpp"
-#include "core/convert_utils.h"
+#include "CLI_Proc.h"
 
 
 
@@ -25,7 +25,8 @@ int main(int argc, char *argv[])
     }
     else if(clipp::parse(argc, argv, CLI_opt))
     {
-        std::cout << "Color converter\n";
+        //std::cout << "Color converter\n";
+        Success("Conversion process finished.");
     }
     else
     {
@@ -37,4 +38,6 @@ int main(int argc, char *argv[])
     //To do: 
     //- more color conversion tests
     //- get assigned values from the CLI parameters into the conversion functions
+
+    CheckInOut(colorFMTIn, colorFMTout);
 }
