@@ -28,6 +28,7 @@ std::string outFile; //For exporting the converted color array into a file
 std::string colorFMTIn;
 std::string colorFMTout;
 std::string inColor;
+char strSep = ' ';
 //bool isIcf = true;
 
 
@@ -85,7 +86,6 @@ auto CLI_opt = (
         if(colorFMTIn.find("RGB=") != std::string::npos)
         {
             std::cout << "Input Color Format: RGB\n";
-            char strSep = ' ';
             stringSplit(inColor, strSep);
             std::cout << "Splited rgb values: \n";
             for(int i = 0; i < MAX_STR_LEN; i++)
@@ -96,12 +96,17 @@ auto CLI_opt = (
         else if(colorFMTIn.find("HSL=") != std::string::npos)
         {
             std::cout << "Input Color Format: HSL\n";
-            
+            stringSplit(inColor, strSep);
+            std::cout << "Splited hsl\n";
+            for(int i=0; i < MAX_STR_LEN; i++)
+            {
+                std::cout << "HSL INPUT: " << ICF_str[i] << "\n";
+            }
         }
         else if(colorFMTIn.find("HEX=") != std::string::npos)
         {
             std::cout << "Input Color Format: HEX\n";
-            
+            std::cout << inColor << "\n";
         }
         else
         {
@@ -127,3 +132,5 @@ auto CLI_opt = (
         }
     })
 );
+
+//CheckInOut(colorFMTIn, colorFMTout);
