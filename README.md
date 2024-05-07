@@ -1,2 +1,2 @@
-# Color-converter-CLI
-The source code of the color command
+# Transform-Color
+The source code of the trcol command and the transColor library
