@@ -12,6 +12,7 @@
 
 #include "dbg.h"
 
+//#include "core/transColor.h"
 #include "core/transColorUtils.h"
 
 #define COLPROC_VER "1.0.0"
@@ -29,10 +30,18 @@ char *GetChHEX2Hsl = NULL;
 char *GetChHEX2Rgb = NULL;
 char *GetFileInput = NULL;
 
-int iR, iG, iB;
-
 RGB inRgb;
+RGB inRgbHsl;
+RGB outRgbHsl;
 RGB_Hex outRgbh;
+HSL outHSL;
+HSL inHSL;
+HSL inHSLHex;
+RGB_Hex outHslHex;
+RGB_Hex inHexHsl;
+HSL outHexHsl;
+RGB_Hex inRgbHex;
+RGB outRgbHex;
 
 static void CLIMain(int ac, char * args[])
 {
@@ -74,6 +83,10 @@ static void CLIMain(int ac, char * args[])
     {
       printf("Advanced color picker...\n");
     }
+    else if(strcmp(args[i], "-sc") == 0 || strcmp(args[i], "--show_color") == 0)
+    {
+      printf("Show Color True...\n");
+    }
     else if(strcmp(args[i], "-sca") == 0 || strcmp(args[i], "--show_color_array") == 0)
     {
       printf("Show saved color array...\n");
@@ -84,10 +97,7 @@ static void CLIMain(int ac, char * args[])
       {
         GetChRGB2Hex = args[i + 1];
         i++;
-        sscanf(GetChRGB2Hex, "%d%d%d", &iR, &iG, &iB);
-        inRgb.R = iR;
-        inRgb.G = iG;
-        inRgb.B = iB;
+        sscanf(GetChRGB2Hex, "%d%d%d", &inRgb.R, &inRgb.G, &inRgb.B);
         RGB2HEX(inRgb, &outRgbh);
         printRGBH(outRgbh);
       }
@@ -102,6 +112,9 @@ static void CLIMain(int ac, char * args[])
       {
         GetChRGB2Hsl = args[i + 1];
         i++;
+        sscanf(GetChRGB2Hsl, "%d%d%d", &inRgbHsl.R, &inRgbHsl.G, &inRgbHsl.B);
+        RGB2HSL(inRgbHsl, &outHSL);
+        printHSL(outHSL);
       }
       else
       {
@@ -114,6 +127,10 @@ static void CLIMain(int ac, char * args[])
       {
         GetChHSL2Rgb = args[i + 1];
         i++;
+        sscanf(GetChHSL2Rgb, "%d %4.2lf %4.2lf", &inHSL.H, &inHSL.S, &inHSL.L);
+        //MARK: HSL2RGB FAILED!!!
+        HSL2RGB(inHSL, &outRgbHsl);
+        printRGB(outRgbHsl);
       }
       else
       {
@@ -126,6 +143,10 @@ static void CLIMain(int ac, char * args[])
       {
         GetChHSL2Hex = args[i + 1];
         i++;
+        sscanf(GetChHSL2Hex, "%d %4.2lf %4.2lf", &inHSLHex.H, &inHSLHex.S, &inHSLHex.S);
+        //MARK: HSL2HEX FAILED!!!
+        HSL2HEX(inHSLHex, &outHslHex);
+        printRGBH(outHslHex);
       }
       else
       {
@@ -138,6 +159,9 @@ static void CLIMain(int ac, char * args[])
       {
         GetChHEX2Hsl = args[i + 1];
         i++;
+        sscanf(GetChHEX2Hsl, "%s%s%s", &inHexHsl.R, &inHexHsl.G, &inHexHsl.B);
+        HEX2HSL(inHexHsl, &outHexHsl);
+        printHSL(outHexHsl);
       }
       else
       {
@@ -150,6 +174,9 @@ static void CLIMain(int ac, char * args[])
       {
         GetChHEX2Rgb = args[i + 1];
         i++;
+        sscanf(GetChHEX2Rgb, "%s%s%s", &inRgbHex.R, &inRgbHex.G, &inRgbHex.B);
+        HEX2RGB(inRgbHex, &outRgbHex);
+        printRGB(outRgbHex);
       }
       else
       {
@@ -180,6 +207,6 @@ static void CLIMain(int ac, char * args[])
     printf("CLI INPUT TEST: RGB2HSL %s\n", GetChRGB2Hsl);
     printf("CLI INPUT TEST: HSL2RGB %s\n", GetChHSL2Rgb);
     printf("CLI INPUT TEST: HEX2HSL %s\n", GetChHEX2Hsl);
-    printf("CLI INPUT TEST: RGB2HEX R= %d | G= %d | B= %d\n", iR, iG, iB);
+    //printf("CLI INPUT TEST: RGB2HEX R= %d | G= %d | B= %d\n", iR, iG, iB);
   #endif
 }
