@@ -5,7 +5,8 @@
 #endif
 
 //MARK: Defined Macros
-//#define DEBUG 
+//Enable this only in dev mode
+//#define DEBUG
 
 #include "CLI_Entry.h"
 
