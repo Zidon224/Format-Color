@@ -1,3 +1,10 @@
+/*
+Algorithms for processing float based HSL
+*/
+
+
+
+
 #pragma once
 
 #include "transColor.h"
@@ -6,6 +13,7 @@
 
 
 
+//These should go into the API list too
 static int procHue(RGB rgb)
 {
   double min = 0;
