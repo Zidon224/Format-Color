@@ -1,3 +1,10 @@
+/*
+Contains the main command line function to be called in the main function + other definitions and default settings
+*/
+
+
+
+
 #pragma once
 
 
@@ -9,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "dbg.h"
 
@@ -18,8 +26,41 @@
 #define COLPROC_VER "1.0.0"
 
 char *CLInfo = 
-"Help\n"
-"Line 2\n"
+"Usage: trcol [conversion options] [convert color types]\n"
+"* General Options *\n"
+"\n"
+"{Short command} | {Long command} | {Description}\n"
+"-h              | --help         | Shows help\n"
+"-v              | --version      | Shows the version of the program\n"
+"-lcs            | --license      | Shows the license + other informations\n"
+"\n"
+"\n"
+"* Conversion commands *\n"
+"Important! Command parameters must be separated by a sinlge space in between \" \" or ' '\n"
+"\n"
+"{Command} | {Parameters & types of prarameters} | {Description}\n"
+"-rgb2hex: <int:R> <int:G> <int:B>               | Converts a color from RGB input to hexadecimal color type\n"
+"-rgb2hsl: <int:R> <int:G> <int:B>               | Converts a color from RGB input to Hue, Saturation, Lightness color type\n"
+"-hsl2rgb: <int:H> <float:S> <floatL:>           | Converts a color from Hue, Saturation, Lightness to RGB color type\n"
+"-hsl2hex: <int:H> <float:S> <floatL:>           | Converts a color from Hue, Saturation, Lightness to hexadecimal color type\n"
+"-hex2hsl: <char:R> <char:G> <char:B>            | Converts a color from hexadecimal color input to Hue, Saturation, Lightness\n"
+"-hex2rgb: <char:R> <char:G> <char:B>            | Converts a color from hexadecimal color input to RGB color type \n"
+"\n"
+"# convert color options #\n"
+"Important! color converting options must be placed before using the color conversion types\n"
+"\n"
+"{Short command} | {Long command}            | {Description}\n"
+"-dsc            | --disable_show_color      | No true color is shown\n"
+"-hpcd           | --hide_post_convert_debug | No debug information will be displayed on after conversion\n"
+"\n"
+"\n"
+"* Extra Features *\n"
+"\n"
+"{Short command} | {Long command}          | {Description}\n"
+"-ncpk           | --native_color_picker   | Triggers display of native color pickers\n"
+"-acpk           | --advanced_color_picker | Triggers the builtin color picker (Has custom user interface)\n"
+"-mcc:           | --multi_color_convert:  | Converts multiple colors from a format to another at once [Requires an input file path in between \" \" or ' ']\n"
+"\n"
 ;
 
 char *GetChRGB2Hex = NULL;
@@ -29,6 +70,9 @@ char *GetChHSL2Hex = NULL;
 char *GetChHEX2Hsl = NULL;
 char *GetChHEX2Rgb = NULL;
 char *GetFileInput = NULL;
+
+bool postConvDebug = true;
+bool ShowColor = true;
 
 RGB inRgb;
 RGB inRgbHsl;
@@ -43,13 +87,22 @@ HSL outHexHsl;
 RGB_Hex inRgbHex;
 RGB outRgbHex;
 
+//The magic feature of the program
+static void printColor(int R, int G, int B)
+{
+  printf("Output color: ");
+  RGB_FG(FG, R, G, B);
+  printf("████████████\n");
+  CresetAll();
+}
+
 static void CLIMain(int ac, char * args[])
 {
   //MARK: Check argument count
   if(ac == 1)
   {
     Err("CLI", "No args!");
-    Info("CLI", "Run colproc -h or --help to get usage guide.");
+    Info("CLI", "Run trcol -h or --help to get usage guide.");
   }
 
   for(int i = 1; i < ac; i++)
@@ -83,13 +136,17 @@ static void CLIMain(int ac, char * args[])
     {
       printf("Advanced color picker...\n");
     }
-    else if(strcmp(args[i], "-sc") == 0 || strcmp(args[i], "--show_color") == 0)
+    else if(strcmp(args[i], "-dsc") == 0 || strcmp(args[i], "--disable_show_color") == 0)
     {
-      printf("Show Color True...\n");
+      ShowColor = false;
     }
     else if(strcmp(args[i], "-sca") == 0 || strcmp(args[i], "--show_color_array") == 0)
     {
       printf("Show saved color array...\n");
+    }
+    else if(strcmp(args[i], "-hpcd") == 0 || strcmp(args[i], "--hide_post_convert_debug") == 0)
+    {
+      postConvDebug = false;
     }
     else if(strcmp(args[i], "-rgb2hex:") == 0)
     {
@@ -100,6 +157,10 @@ static void CLIMain(int ac, char * args[])
         sscanf(GetChRGB2Hex, "%d%d%d", &inRgb.R, &inRgb.G, &inRgb.B);
         RGB2HEX(inRgb, &outRgbh);
         printRGBH(outRgbh);
+        if(ShowColor)
+        {
+          printColor(inRgb.R, inRgb.G, inRgb.B);
+        }
       }
       else
       {
@@ -115,6 +176,10 @@ static void CLIMain(int ac, char * args[])
         sscanf(GetChRGB2Hsl, "%d%d%d", &inRgbHsl.R, &inRgbHsl.G, &inRgbHsl.B);
         RGB2HSL(inRgbHsl, &outHSL);
         printHSL(outHSL);
+        if(ShowColor)
+        {
+          printColor(inRgbHsl.R, inRgbHsl.G, inRgbHsl.B);
+        }
       }
       else
       {
@@ -201,6 +266,11 @@ static void CLIMain(int ac, char * args[])
       sprintf(temp, "Unknown argument %s", args[i]);
       Err("CLI", temp);
     }
+  }
+
+  if(postConvDebug)
+  {
+    Success("Conversion", "Color converted successfully!");
   }
   #ifdef DEBUG
     printf("CLI INPUT TEST: RGB2HEX %s\n", GetChRGB2Hex);
