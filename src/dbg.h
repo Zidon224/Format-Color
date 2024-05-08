@@ -1,3 +1,9 @@
+/*
+Simple debug functions based on my small header for ansi escapes
+*/
+
+
+
 #pragma once
 
 
@@ -43,6 +49,7 @@ static void Info(const char * flag, const char * str)
   printf(" -> %s ] %s\n", flag, str);
 }
 
+//Just to make sure everything works as expected before using the debuging functions
 #ifdef DEBUG
   void DebugTest()
   {
