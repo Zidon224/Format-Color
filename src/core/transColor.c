@@ -25,7 +25,7 @@ void printRGBH(RGB_Hex rgbh)
 
 void printHSL(HSL hsl)
 {
-  printf("Converted HSL: %d | %4.2lf | %4.2lf", hsl.H, hsl.S, hsl.L);
+  printf("Converted HSL: %d | %4.2lf | %4.2lf\n", hsl.H, hsl.S, hsl.L);
 }
 
 void HEXmerge(RGB_Hex rgbh, char* comb)
@@ -132,76 +132,104 @@ void HSL2RGB(HSL hsl, RGB *rgb)
 
   if(hsl.S == 0)
   {
-    rgb -> R = hsl.L * 255.0;
-    rgb -> G = hsl.L * 255.0;
-    rgb -> B = hsl.L * 255.0;
+    rgb->R = hsl.L * 255.0;
+    rgb->G = hsl.L * 255.0;
+    rgb->B = hsl.L * 255.0;
   }
   else
   {
-    double temp1;
+    //temporary_1
+    double temporary_1;
 
     if(hsl.L < 0.5)
-      temp1 = hsl.L * (1.0 + hsl.S);
-
+    {
+      temporary_1 = hsl.L * (1.0 + hsl.S);
+    }
     else
-      temp1 = hsl.L + hsl.S - hsl.L * hsl.S;
+    {
+      temporary_1 = hsl.L + hsl.S - hsl.L * hsl.S;
+    }
 
-    double temp2 = 2.0 * hsl.L - temp1;
+    //temporary_2
+    double temporary_2 = 2.0 * hsl.L - temporary_1;
+
+    //hue
     double hue = hsl.H / 360.0;
 
-    double tempR = hue + 0.333;
-    double tempG;
-    double tempB = hue + 0.333;
+    //temporary_R,  temporary_G and temporary_B
+    double temporary_R = hue + 0.333;
+    double temporary_G = hue;
+    double temporary_B = hue - 0.333;
 
-    if(tempR < 0.0)
-      tempR += 1.0;
+    //ensure temporary_R,  temporary_G and temporary_B are between 0 and 1
+    if(temporary_R < 0.0)
+      temporary_R += 1.0;
+    if(temporary_R > 1.0)
+      temporary_R -= 1.0;
 
-    if(tempR > 1.0)
-      tempR -= 1.0;
+    if(temporary_G < 0.0)
+      temporary_G += 1.0;
+    if(temporary_G > 1.0)
+      temporary_G -= 1.0;
 
+    if(temporary_B < 0.0)
+      temporary_B += 1.0;
+    if(temporary_B > 1.0)
+      temporary_B -= 1.0;
 
-    if(tempG < 0.0)
-      tempG += 1.0;
-
-    if(tempG > 1.0)
-      tempG -= 1.0;
-
-
-    if(tempB < 0.0)
-      tempB += 1.0;
-
-    if(tempB > 1.0)
-      tempB -= 1.0;
-
-
-    if((6.0 * tempR) < 1.0)
-      rgb -> R = round((temp2 + (temp1 - temp2) * 6.0 * tempR) * 255.0);
-    else if((2.0 * tempR) < 1.0)
-      rgb -> R = round(temp1 * 255.0);
-    else if((3.0 * tempR) < 2.0)
-      rgb -> R = round((temp2 + (temp1 - temp2) * (0.666 - tempR) * 6.0) * 255.0);
+    //RED
+    if((6.0 * temporary_R) < 1.0)
+    {
+      rgb->R = round((temporary_2 + (temporary_1 - temporary_2) * 6.0 * temporary_R) * 255.0);
+    }
+    else if((2.0 * temporary_R) < 1.0)
+    {
+      rgb->R = round(temporary_1 * 255.0);
+    }
+    else if((3.0 * temporary_R) < 2.0)
+    {
+      rgb->R = round((temporary_2 + (temporary_1 - temporary_2) * (0.666 - temporary_R) * 6.0) * 255.0);
+    }
     else
-      rgb -> R = round(temp2 * 255.0);
+    {
+      rgb->R = round(temporary_2 * 255.0);
+    }
 
-
-    if((6.0 * tempR) < 1.0)
-      rgb -> G = round((temp2 + (temp1 - temp2) * 6.0 * tempG) * 255.0);
-    else if((2.0 * tempG) < 1.0)
-      rgb -> G = round(temp1 * 255.0);
-    else if((3.0 * tempG) < 2.0)
-      rgb -> G = round((temp2 + (temp1 - temp2) * (0.666 - tempG) * 6.0) * 255.0);
+    //GREEN
+    if((6.0 * temporary_G) < 1.0)
+    {
+      rgb->G = round((temporary_2 + (temporary_1 - temporary_2) * 6.0 * temporary_G) * 255.0);
+    }
+    else if((2.0 * temporary_G) < 1.0)
+    {
+      rgb->G = round(temporary_1 * 255.0);
+    }
+    else if((3.0 * temporary_G) < 2.0)
+    {
+      rgb->G = round((temporary_2 + (temporary_1 - temporary_2) * (0.666 - temporary_G) * 6.0) * 255.0);
+    }
     else
-      rgb -> G = round(temp2 * 255.0);
+    {
+      rgb->G = round(temporary_2 * 255.0);
+    }
 
-
-    if((6.0 * tempB) < 1.0)
-      rgb -> B = round((temp2 + (temp1 - temp2) * 6.0 * tempB) * 255.0);
-    else if((2.0 * tempB) < 1.0)
-      rgb -> B = round(temp1 * 255.0);
-    else if((3.0 * tempB) < 2.0)
-      rgb -> B = round((temp2 + (temp1 - temp2) * (0.666 - tempB) * 6.0) * 255.0);
+    //BLUE
+    if((6.0 * temporary_B) < 1.0)
+    {
+      rgb->B = round((temporary_2 + (temporary_1 - temporary_2) * 6.0 * temporary_B) * 255.0);
+    }
+    else if((2.0 * temporary_B) < 1.0)
+    {
+      rgb->B = round(temporary_1 * 255.0);
+    }
+    else if((3.0 * temporary_B) < 2.0)
+    {
+      rgb->B = round((temporary_2 + (temporary_1 - temporary_2) * (0.666 - temporary_B) * 6.0) * 255.0);
+    }
     else
-      rgb -> B = round(temp2 * 255.0);
+    {
+      rgb->B = round(temporary_2 * 255.0);
+    }
   }
 }
 
