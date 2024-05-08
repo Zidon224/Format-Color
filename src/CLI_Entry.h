@@ -21,7 +21,7 @@ Contains the main command line function to be called in the main function + othe
 #include "dbg.h"
 
 //#include "core/transColor.h"
-#include "core/transColorUtils.h"
+#include "core/transColor.c"
 
 #define COLPROC_VER "1.0.0"
 
