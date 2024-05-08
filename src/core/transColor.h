@@ -1,11 +1,17 @@
+/*
+This header provides API to the transform color library
+API is incomplete btw I still have to do a bit more work...
+*/
+
+//Original code found at: https://github.com/CodeDrome/colour-converter-c
+
+
 #pragma once
 
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <math.h>
-
-//#include "transColorUtils.h"
 
 
 //Data types for handling color types
