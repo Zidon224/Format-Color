@@ -22,6 +22,7 @@ Contains the main command line function to be called in the main function + othe
 
 
 #include "core/transColor.c"
+#include "color_dlg_box.h"
 
 
 #define TRCOL_VER "1.0.0"
@@ -139,10 +140,12 @@ static void CLIMain(int ac, char * args[])
       printf("License: ... \n");
     }
     //This option will trigger open the native color picker on linux and windows too
-    //Todo...
     else if(strcmp(args[i], "-ncpk") == 0 || strcmp(args[i], "--native_color_picker") == 0)
     {
-      printf("Native color picker...\n");
+      #ifdef DEBUG
+        printf("Open Color Dialog Box\n");
+      #endif
+      NativeDlgColorBox();
     }
     //This will trigger the builtin color picker which can also scan colors from screen pixels too (like Microsoft's color picker from Windows power toys)
     //Todo...
