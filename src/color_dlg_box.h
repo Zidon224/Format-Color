@@ -28,4 +28,8 @@ static void NativeDlgColorBox()
       rgbCurrent = cc.rgbResult; 
     }
   #endif
+  #ifdef __linux__
+    FILE *cdb;
+    cdb = popen("zenity --color-selection --title 'Pick a Color'", "r");
+  #endif
 }
