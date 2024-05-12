@@ -151,7 +151,7 @@ static void CLIMain(int ac, char * args[])
     //Todo...
     else if(strcmp(args[i], "-acpk") == 0 || strcmp(args[i], "--advanced_color_picker") == 0)
     {
-      printf("Advanced color picker...\n");
+      printf("Advanced color picker...\n To be inmplemented...\n");
     }
     //This prevents the colored bar from being displayed after conversion
     //Idk why someone would like to disable this feature but I decided to add it tho. LoL
@@ -178,7 +178,7 @@ static void CLIMain(int ac, char * args[])
         conversionState = true;
         GetChRGB2Hex = args[i + 1];
         i++;
-        sscanf(GetChRGB2Hex, "%s%s%s", &inRgb.R, &inRgb.G, &inRgb.B);
+        sscanf(GetChRGB2Hex, "%hhd %hhd %hhd", &inRgb.R, &inRgb.G, &inRgb.B);
         RGB2HEX(inRgb, &outRgbh);
         printRGBH(outRgbh);
         if(ShowColor)
@@ -198,7 +198,7 @@ static void CLIMain(int ac, char * args[])
         conversionState = true;
         GetChRGB2Hsl = args[i + 1];
         i++;
-        sscanf(GetChRGB2Hsl, "%s%s%s", &inRgbHsl.R, &inRgbHsl.G, &inRgbHsl.B);
+        sscanf(GetChRGB2Hsl, "%hhd %hhd %hhd", &inRgbHsl.R, &inRgbHsl.G, &inRgbHsl.B);
         RGB2HSL(inRgbHsl, &outHSL);
         printHSL(outHSL);
         if(ShowColor)
@@ -301,6 +301,7 @@ static void CLIMain(int ac, char * args[])
       {
         GetFileInput = args[i + 1];
         i++;
+        printf("To be implemented...\n");
       }
       else
       {
@@ -327,6 +328,7 @@ static void CLIMain(int ac, char * args[])
     printf("CLI INPUT TEST: RGB2HSL %s\n", GetChRGB2Hsl);
     printf("CLI INPUT TEST: HSL2RGB %s\n", GetChHSL2Rgb);
     printf("CLI INPUT TEST: HEX2HSL %s\n", GetChHEX2Hsl);
+    printf("CLI INPUT TEST: RGB2HEX2 %d | %d | %d \n", inRgb.R, inRgb.G, inRgb.B);
     printf("Test H= %d | S= %4.2lf | L= %4.2lf", inHSL.H, inHSL.S, inHSL.L);
     //printf("CLI INPUT TEST: RGB2HEX R= %d | G= %d | B= %d\n", iR, iG, iB);
   #endif
