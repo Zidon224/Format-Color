@@ -8,10 +8,7 @@ API is incomplete btw I still have to do a bit more work...
 
 #pragma once
 
-#include <stdlib.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <math.h>
 
 
 //Data types for handling color types
@@ -42,6 +39,7 @@ Returns true if color is correct
 */
 bool checkRGB_HEX(RGB_Hex rgbh);
 bool checkHSL(HSL hsl);
+bool checkRGB(RGB rgb);
 
 void HEX2RGB(RGB_Hex rgbh, RGB *rgb);
 void HEX2HSL(RGB_Hex rgbh, HSL *hsl);
@@ -52,3 +50,8 @@ void HSL2HEX(HSL hsl, RGB_Hex *rgbh);
 void printRGB(RGB rgb);
 void printRGBH(RGB_Hex rgbh);
 void printHSL(HSL hsl);
+//- - - - HSL processor functions - - - -
+//Returns the processed value
+static int procHue(RGB rgb);
+static double procSat(RGB rgb, double lightness);
+static double procLight(RGB rgb);
