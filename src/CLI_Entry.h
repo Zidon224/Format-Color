@@ -25,7 +25,7 @@ Contains the main command line function to be called in the main function + othe
 #include "color_dlg_box.h"
 
 
-#define TRCOL_VER "1.0.0"
+#define TRCOL_VER "Demo Ver 1"
 
 //And ofc the help string
 char *CLInfo = 
@@ -123,7 +123,7 @@ static void CLIMain(int ac, char * args[])
     }
     else if(strcmp(args[i], "-v") == 0 || strcmp(args[i], "--version") == 0)
     {
-      printf("Version %s\n", TRCOL_VER);
+      printf("Version: %s\n", TRCOL_VER);
     }
     //idk if should I completely cancel this XD
     else if(strcmp(args[i], "-dbg_test") == 0)
@@ -293,6 +293,40 @@ static void CLIMain(int ac, char * args[])
         Err("Hex to RGB", "No HEX input was given!");
       }
     }
+    else if(strcmp(args[i], "-is_rgb:") == 0)
+    {
+      if(i + 1 < ac)
+      {
+        GetChRGB2Hex = args[i + 1];
+        i++;
+        sscanf(GetChRGB2Hex, "%hhd %hhd %hhd", &inRgbHsl.R, &inRgbHsl.G, &inRgbHsl.B);
+        if(!checkRGB(inRgbHsl))
+        {
+          printf("RGB is valid\n");
+        }
+        else
+        {
+          Err("RGB Validation", "RGB input is invalid!\n");
+        }
+      }
+    }
+    else if(strcmp(args[i], "-is_hex:") == 0)
+    {
+      if(i + 1 < ac)
+      {
+        //inHexHsl
+        GetChHEX2Hsl = args[i + 1];
+        sscanf(GetChHEX2Hsl, "%s %s %s", inHexHsl.R, inHexHsl.G, inHexHsl.B);
+        if(!checkRGB_HEX(inHexHsl))
+        {
+          printf("Hex is valid\n");
+        }
+        else
+        {
+          Err("Hex validation", "Hex is invalid!\n");
+        }
+      }
+    }
     //With this command the user can convert multiple colors at the same time from a format to another using json structure
     //Todo...
     else if(strcmp(args[i], "-mcc:") == 0 || strcmp(args[i], "--multi_color_convert:"))
@@ -329,6 +363,7 @@ static void CLIMain(int ac, char * args[])
     printf("CLI INPUT TEST: HSL2RGB %s\n", GetChHSL2Rgb);
     printf("CLI INPUT TEST: HEX2HSL %s\n", GetChHEX2Hsl);
     printf("CLI INPUT TEST: RGB2HEX2 %d | %d | %d \n", inRgb.R, inRgb.G, inRgb.B);
+    printf("CLI INPUT TEST: HSL2RGB2 %d | %f | %f\n", inHSL.H, inHSL.S, inHSL.L);
     printf("Test H= %d | S= %4.2lf | L= %4.2lf", inHSL.H, inHSL.S, inHSL.L);
     //printf("CLI INPUT TEST: RGB2HEX R= %d | G= %d | B= %d\n", iR, iG, iB);
   #endif
