@@ -2,79 +2,22 @@
 
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "transColor.h"
-#include "HSL_processor.h"
+#include "transColUtils.h"
+#include "HSL_processor.c"
+#include "color_validations.c"
 
 
-static int CharIndex(char* str, char c)
-{
-  char *i = strchr(str, c);
-  return i != NULL ? i - str : -1;
-}
 
-void printRGB(RGB rgb)
-{
-  printf("Converted RGB: %d | %d | %d\n", rgb.R, rgb.G, rgb.B);
-}
 
-void printRGBH(RGB_Hex rgbh)
-{
-  printf("Converted HEX: #%s%s%s\n", rgbh.R, rgbh.G, rgbh.B);
-}
 
-void printHSL(HSL hsl)
-{
-  printf("Converted HSL: %d | %4.2lf | %4.2lf\n", hsl.H, hsl.S, hsl.L);
-}
-
-void HEXmerge(RGB_Hex rgbh, char* comb)
-{
-  strcat(comb, rgbh.R);
-  strcat(comb, rgbh.G);
-  strcat(comb, rgbh.B);
-}
 
 //Implementations
 
-bool checkHex(char c)
-{
-  if((c < 48 || c > 57) && (c < 65 || c > 70) && (c > 97 || c > 102))
-    return false;
-  else
-    return true;
-}
-
-bool checkRGB_HEX(RGB_Hex rgbh)
-{
-  if(strlen(rgbh.R) != 2 || strlen(rgbh.G) != 2 || strlen(rgbh.B) != 2)
-    return false;
-
-  char combn[7] = "";
-
-  HEXmerge(rgbh, combn);
-
-  for(int i = 0; i <= 5; i++)
-  {
-    if(!checkHex(combn[i]))
-      return false;
-  }
-  return false;
-}
-
-bool checkHSL(HSL hsl)
-{
-  if(hsl.H < 0 || hsl.H > 360)
-    return false;
-
-  if(hsl.S < 0 || hsl.S > 100)
-    return false;
-
-  if(hsl.L < 0 || hsl.L > 100)
-    return false;
-
-  return true;
-}
 
 void HEX2RGB(RGB_Hex rgbh, RGB *rgb)
 {
@@ -114,8 +57,8 @@ void RGB2HEX(RGB rgb, RGB_Hex *rgbh)
 void RGB2HSL(RGB rgb, HSL *hsl)
 {
   hsl -> H = (int) procHue(rgb);
-  hsl -> S = procSat(rgb, hsl -> L);
   hsl -> L = procLight(rgb);
+  hsl -> S = procSat(rgb, hsl -> L);
 }
 
 void HEX2HSL(RGB_Hex rgbh, HSL *hsl)
