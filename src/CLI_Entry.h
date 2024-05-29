@@ -66,6 +66,15 @@ char *CLInfo =
 "\n"
 ;
 
+char *Defaults = 
+{
+  "- - - - Default Options - - - -\n"
+  "{Short command} | {Long command}      | {value}\n"
+  "-pcd             --post_convert_debug | true\n"
+  "\n"
+  "\n"
+}
+;
 //This may be kind of fucked LMFAO
 char *GetChRGB2Hex = NULL;
 char *GetChRGB2Hsl = NULL;
@@ -75,10 +84,11 @@ char *GetChHEX2Hsl = NULL;
 char *GetChHEX2Rgb = NULL;
 char *GetFileInput = NULL;
 
-bool postConvDebug = true;
+bool postConvDebug = false;
+bool HideMessages = false;
 bool ShowColor = true;
 bool conversionState = false;
-
+bool cmd_check;
 //and this 1 too :)))
 RGB inRgb;
 RGB inRgbHsl;
@@ -119,11 +129,18 @@ static void CLIMain(int ac, char * args[])
     //MARK: Show Info on CMD
     if(strcmp(args[i], "-h") == 0 || strcmp(args[i], "--help") == 0)
     {
+      cmd_check = true;
       printf("%s", CLInfo);
     }
     else if(strcmp(args[i], "-v") == 0 || strcmp(args[i], "--version") == 0)
     {
+      cmd_check = true;
       printf("Version: %s\n", TRCOL_VER);
+    }
+    else if(strcmp(args[i], "-sdo") == 0 || strcmp(args[i], "--show_default_options") == 0)
+    {
+      cmd_check = true;
+      printf("%s\n", Defaults);
     }
     //idk if should I completely cancel this XD
     else if(strcmp(args[i], "-dbg_test") == 0)
@@ -137,11 +154,13 @@ static void CLIMain(int ac, char * args[])
     //Not yet
     else if(strcmp(args[i], "-lcs") == 0 || strcmp(args[i], "--license") == 0)
     {
+      cmd_check = true;
       printf("License: ... \n");
     }
     //This option will trigger open the native color picker on linux and windows too
     else if(strcmp(args[i], "-ncpk") == 0 || strcmp(args[i], "--native_color_picker") == 0)
     {
+      cmd_check = true;
       #ifdef DEBUG
         printf("Open Color Dialog Box\n");
       #endif
@@ -151,45 +170,59 @@ static void CLIMain(int ac, char * args[])
     //Todo...
     else if(strcmp(args[i], "-acpk") == 0 || strcmp(args[i], "--advanced_color_picker") == 0)
     {
+      cmd_check = true;
       printf("Advanced color picker...\n To be inmplemented...\n");
     }
     //This prevents the colored bar from being displayed after conversion
     //Idk why someone would like to disable this feature but I decided to add it tho. LoL
     else if(strcmp(args[i], "-dsc") == 0 || strcmp(args[i], "--disable_show_color") == 0)
     {
+      cmd_check = true;
       ShowColor = false;
     }
     //Not sure what can I do with this
     //Any other ideeas are good too
     else if(strcmp(args[i], "-sca") == 0 || strcmp(args[i], "--show_color_array") == 0)
     {
+      cmd_check = true;
       printf("Show saved color array...\n");
     }
     //This hides the post debug message so you dodn't get annoyed all the time with "[ Success -> Conversion ] Color converted successfully!"
-    else if(strcmp(args[i], "-hpcd") == 0 || strcmp(args[i], "--hide_post_convert_debug") == 0)
+    else if(strcmp(args[i], "-pcd") == 0 || strcmp(args[i], "--post_convert_debug") == 0)
     {
-      postConvDebug = false;
+      cmd_check = true;
+      postConvDebug = true;
     }
     //And from here we have the actuall conversion commands
     else if(strcmp(args[i], "-rgb2hex:") == 0)
     {
+      //Check if the secondary argument was provided to the parameter
       if(i + 1 < ac)
       {
         conversionState = true;
         GetChRGB2Hex = args[i + 1];
         i++;
-        sscanf(GetChRGB2Hex, "%hhd %hhd %hhd", &inRgb.R, &inRgb.G, &inRgb.B);
+        //Scan for the assigned input from the second argument of the parameter
+        sscanf(GetChRGB2Hex, "%hhd%hhd%hhd", &inRgb.R, &inRgb.G, &inRgb.B);
+        //And convert the color
         RGB2HEX(inRgb, &outRgbh);
+        //Then print it to the stdout
         printRGBH(outRgbh);
+        //Print characters as blocks with true RGB (24 bits) color only if this option is enabled
+        //Function defined at line 97
         if(ShowColor)
         {
           printColor(inRgb.R, inRgb.G, inRgb.B);
         }
       }
+      //And finally check if color input was assigned
       else
       {
         Err("RGB to HEX", "No RGB input was given!");
       }
+      //Set this to 1 so it dosen't give error for unkown arguments that are actually existing.
+      cmd_check = true;
+      //And so one....
     }
     else if(strcmp(args[i], "-rgb2hsl:") == 0)
     {
@@ -210,6 +243,7 @@ static void CLIMain(int ac, char * args[])
       {
         Err("RGB to HSL", "No RGB input was given!");
       }
+      cmd_check = true;
     }
     else if(strcmp(args[i], "-hsl2rgb:") == 0)
     {
@@ -230,6 +264,7 @@ static void CLIMain(int ac, char * args[])
       {
         Err("HSL to RGB", "No HSL input was given!");
       }
+      cmd_check = true;
     }
     else if(strcmp(args[i], "-hsl2hex:") == 0)
     {
@@ -243,6 +278,7 @@ static void CLIMain(int ac, char * args[])
         printRGBH(outHslHex);
         if(ShowColor)
         {
+          //Some extra color conversion is required since terminals support only true color RGB
           HEX2RGB(outHslHex, &outRgbHex);
           printColor(outRgbHex.R, outRgbHex.G, outRgbHex.B);
         }
@@ -251,6 +287,7 @@ static void CLIMain(int ac, char * args[])
       {
         Err("HSL to HEX", "No HSL input was given!");
       }
+      cmd_check = true;
     }
     else if(strcmp(args[i], "-hex2hsl:") == 0)
     {
@@ -264,6 +301,7 @@ static void CLIMain(int ac, char * args[])
         printHSL(outHexHsl);
         if(ShowColor)
         {
+          //Same for this 1
           HEX2RGB(inHexHsl, &outRgbHex);
           printColor(outRgbHex.R, outRgbHex.G, outRgbHex.B);
         }
@@ -272,6 +310,7 @@ static void CLIMain(int ac, char * args[])
       {
         Err("HEX to HSL", "No HEX input was given!");
       }
+      cmd_check = true;
     }
     else if(strcmp(args[i], "-hex2rgb:") == 0)
     {
@@ -292,7 +331,9 @@ static void CLIMain(int ac, char * args[])
       {
         Err("Hex to RGB", "No HEX input was given!");
       }
+      cmd_check = true;
     }
+    //From here there are commands for checking if a color of any format is correctly assigned
     else if(strcmp(args[i], "-is_rgb:") == 0)
     {
       if(i + 1 < ac)
@@ -309,6 +350,7 @@ static void CLIMain(int ac, char * args[])
           Err("RGB Validation", "RGB input is invalid!\n");
         }
       }
+      cmd_check = true;
     }
     else if(strcmp(args[i], "-is_hex:") == 0)
     {
@@ -326,10 +368,11 @@ static void CLIMain(int ac, char * args[])
           Err("Hex validation", "Hex is invalid!\n");
         }
       }
+      cmd_check = true;
     }
     //With this command the user can convert multiple colors at the same time from a format to another using json structure
     //Todo...
-    else if(strcmp(args[i], "-mcc:") == 0 || strcmp(args[i], "--multi_color_convert:"))
+    else if(strcmp(args[i], "-mcc:") == 0 || strcmp(args[i], "--multi_color_convert:") == 0)
     {
       if(i + 1 < ac)
       {
@@ -341,9 +384,18 @@ static void CLIMain(int ac, char * args[])
       {
         Err("Multi color convert", "Missing filename!");
       }
+      cmd_check = true;
     }
     //And finally check for any unknown args entered and exit
-    else
+    //The wrong way to do that LOL
+    /*else
+    {
+      char temp[100];
+      sprintf(temp, "Unknown argument %s", args[i]);
+      Err("CLI", temp);
+    }*/
+    //And the right way
+    if(!cmd_check)
     {
       char temp[100];
       sprintf(temp, "Unknown argument %s", args[i]);
@@ -357,7 +409,7 @@ static void CLIMain(int ac, char * args[])
     Success("Conversion", "Color converted successfully!");
   }
   //Again for testing purposes only
-  #ifdef DEBUG
+  #ifdef DEBUG_CLI_ENTRY
     printf("CLI INPUT TEST: RGB2HEX %s\n", GetChRGB2Hex);
     printf("CLI INPUT TEST: RGB2HSL %s\n", GetChRGB2Hsl);
     printf("CLI INPUT TEST: HSL2RGB %s\n", GetChHSL2Rgb);
