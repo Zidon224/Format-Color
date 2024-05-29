@@ -47,9 +47,15 @@ void RGB2HEX(RGB rgb, RGB_Hex *rgbh);
 void RGB2HSL(RGB rgb, HSL *hsl);
 void HSL2RGB(HSL hsl, RGB *rgb);
 void HSL2HEX(HSL hsl, RGB_Hex *rgbh);
+//Functions for displaying the converted color types to stdout
 void printRGB(RGB rgb);
 void printRGBH(RGB_Hex rgbh);
 void printHSL(HSL hsl);
+//Functions with char return for displaying the converted color types
+//These can be used for manual management of the output after conversion
+char getRGB(RGB rgb);
+char getRGBHex(RGB_Hex rgbh);
+char getHSL(HSL hsl);
 //- - - - HSL processor functions - - - -
 //Returns the processed value
 static int procHue(RGB rgb);
