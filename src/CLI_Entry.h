@@ -23,6 +23,7 @@ Contains the main command line function to be called in the main function + othe
 
 #include "core/transColor.c"
 #include "color_dlg_box.h"
+#include "clipboard.h"
 
 
 #define TRCOL_VER "Demo Ver 1"
@@ -60,7 +61,7 @@ char *CLInfo =
 "* Extra Features *\n"
 "\n"
 "{Short command} | {Long command}          | {Description}\n"
-"-ncpk           | --native_color_picker   | Triggers display of native color pickers\n"
+"-ncs            | --native_color_selector | Triggers display of native color pickers\n"
 "-acpk           | --advanced_color_picker | Triggers the builtin color picker (Has custom user interface)\n"
 "-mcc:           | --multi_color_convert:  | Converts multiple colors from a format to another at once [Requires an input file path in between \" \" or ' ']\n"
 "\n"
@@ -83,6 +84,7 @@ char *GetChHSL2Hex = NULL;
 char *GetChHEX2Hsl = NULL;
 char *GetChHEX2Rgb = NULL;
 char *GetFileInput = NULL;
+char *Temporarry = NULL;
 
 bool postConvDebug = false;
 bool HideMessages = false;
@@ -116,7 +118,7 @@ static void printColor(int R, int G, int B)
 
 static void CLIMain(int ac, char * args[])
 {
-  //MARK: Check argument count
+  //MARK: Check args count
   if(ac == 1)
   {
     Err("CLI", "No args!");
@@ -143,6 +145,7 @@ static void CLIMain(int ac, char * args[])
       printf("%s\n", Defaults);
     }
     //idk if should I completely cancel this XD
+    //MARK: CLI debug test
     else if(strcmp(args[i], "-dbg_test") == 0)
     {
       #ifdef DEBUG
@@ -158,7 +161,7 @@ static void CLIMain(int ac, char * args[])
       printf("License: ... \n");
     }
     //This option will trigger open the native color picker on linux and windows too
-    else if(strcmp(args[i], "-ncpk") == 0 || strcmp(args[i], "--native_color_picker") == 0)
+    else if(strcmp(args[i], "-ncs") == 0 || strcmp(args[i], "--native_color_selector") == 0)
     {
       cmd_check = true;
       #ifdef DEBUG
@@ -194,6 +197,7 @@ static void CLIMain(int ac, char * args[])
       postConvDebug = true;
     }
     //And from here we have the actuall conversion commands
+    //MARK: Converts commands
     else if(strcmp(args[i], "-rgb2hex:") == 0)
     {
       //Check if the secondary argument was provided to the parameter
@@ -334,6 +338,7 @@ static void CLIMain(int ac, char * args[])
       cmd_check = true;
     }
     //From here there are commands for checking if a color of any format is correctly assigned
+    //MARK: Color validations
     else if(strcmp(args[i], "-is_rgb:") == 0)
     {
       if(i + 1 < ac)
@@ -359,7 +364,7 @@ static void CLIMain(int ac, char * args[])
         //inHexHsl
         GetChHEX2Hsl = args[i + 1];
         sscanf(GetChHEX2Hsl, "%s %s %s", inHexHsl.R, inHexHsl.G, inHexHsl.B);
-        if(!checkRGB_HEX(inHexHsl))
+        if(checkRGB_HEX(inHexHsl))
         {
           printf("Hex is valid\n");
         }
@@ -370,8 +375,27 @@ static void CLIMain(int ac, char * args[])
       }
       cmd_check = true;
     }
+    else if(strcmp(args[i], "-is_hsl:") == 0)
+    {
+      if(i + 1 < ac)
+      {
+        //inHexHsl
+        GetChHSL2Rgb = args[i + 1];
+        sscanf(GetChHSL2Rgb, "%d %lf %lf", &inHSL.H, &inHSL.S, &inHSL.L);
+        if(checkHSL(inHSL))
+        {
+          printf("HSL is valid\n");
+        }
+        else
+        {
+          Err("HSL validation", "HSL is invalid!\n");
+        }
+      }
+      cmd_check = true;
+    }
     //With this command the user can convert multiple colors at the same time from a format to another using json structure
     //Todo...
+    //MARK: Misc commands
     else if(strcmp(args[i], "-mcc:") == 0 || strcmp(args[i], "--multi_color_convert:") == 0)
     {
       if(i + 1 < ac)
@@ -383,6 +407,17 @@ static void CLIMain(int ac, char * args[])
       else
       {
         Err("Multi color convert", "Missing filename!");
+      }
+      cmd_check = true;
+    }
+    //Only for testing purposes!!
+    else if(strcmp(args[i], "-cpb:") == 0)
+    {
+      if(i + 1 < ac)
+      {
+        Temporarry = args[i + 1];
+        i++;
+        Clipboard_copy(Temporarry);
       }
       cmd_check = true;
     }
