@@ -7,6 +7,7 @@
 //MARK: Defined Macros
 //Enable this only in dev mode
 //#define DEBUG_CLI_ENTRY
+//#define CLIPBOARD_DEBUG
 
 #include "CLI_Entry.h"
 
