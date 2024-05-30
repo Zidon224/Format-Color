@@ -36,7 +36,7 @@ bool checkRGB_HEX(RGB_Hex rgbh)
     if(!checkHex(combn[i]))
       return false;
   }
-  return false;
+  return true;
 }
 
 //Exported
