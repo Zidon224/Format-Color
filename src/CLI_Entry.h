@@ -33,10 +33,11 @@ char *CLInfo =
 "Usage: trcol [conversion options] [convert color types]\n"
 "* General Options *\n"
 "\n"
-"{Short command} | {Long command} | {Description}\n"
-"-h              | --help         | Shows help\n"
-"-v              | --version      | Shows the version of the program\n"
-"-lcs            | --license      | Shows the license + other informations\n"
+"{Short command} | {Long command}  | {Description}\n"
+"-h              | --help          | Shows help\n"
+"-v              | --version       | Shows the version of the program\n"
+"-tinf           | --tehnical_info | Shows the tehnical information abt the program\n"
+"-lcs            | --license       | Shows the license + other informations\n"
 "\n"
 "\n"
 "* Conversion commands *\n"
@@ -61,6 +62,7 @@ char *CLInfo =
 "* Extra Features *\n"
 "\n"
 "{Short command} | {Long command}          | {Description}\n"
+"-ccp            | --color_copy            | Copy the color from the native color selector to clipboard\n"
 "-ncs            | --native_color_selector | Triggers display of native color pickers\n"
 "-acpk           | --advanced_color_picker | Triggers the builtin color picker (Has custom user interface)\n"
 "-mcc:           | --multi_color_convert:  | Converts multiple colors from a format to another at once [Requires an input file path in between \" \" or ' ']\n"
@@ -76,6 +78,20 @@ char *Defaults =
   "\n"
 }
 ;
+
+char *Thehnical_info = 
+{
+  "- - - - Tegnical information - - - -\n"
+  "built with: GCC 10.3.0\n"
+  "crossplatform: yes (Linux , Windows)\n"
+  "Programing language used: C\n"
+  "License: (to be choosen soon...)\n"
+  "Internal / External library(s): transformColor\n"
+  "Author(s): Zidon224\n"
+  "Source code: https://github.com/Zidon224/Transform-Color\n"
+}
+;
+
 //This may be kind of fucked LMFAO
 char *GetChRGB2Hex = NULL;
 char *GetChRGB2Hsl = NULL;
@@ -90,6 +106,7 @@ bool postConvDebug = false;
 bool HideMessages = false;
 bool ShowColor = true;
 bool conversionState = false;
+bool ncsClipboard = false;
 bool cmd_check;
 //and this 1 too :)))
 RGB inRgb;
@@ -139,10 +156,15 @@ static void CLIMain(int ac, char * args[])
       cmd_check = true;
       printf("Version: %s\n", TRCOL_VER);
     }
+    else if(strcmp(args[i], "-tinf") == 0 || strcmp(args[i], "--tehnical_info") == 0)
+    {
+      cmd_check = true;
+      printf("%s", Thehnical_info);
+    }
     else if(strcmp(args[i], "-sdo") == 0 || strcmp(args[i], "--show_default_options") == 0)
     {
       cmd_check = true;
-      printf("%s\n", Defaults);
+      printf("%s \n", Defaults);
     }
     //idk if should I completely cancel this XD
     //MARK: CLI debug test
@@ -160,6 +182,12 @@ static void CLIMain(int ac, char * args[])
       cmd_check = true;
       printf("License: ... \n");
     }
+    else if(strcmp(args[i], "-ccp") == 0 || strcmp(args[i], "--color_copy") == 0)
+    {
+      cmd_check = true;
+      ncsClipboard = true; //Enables the copy to clipboard of the selected color from the native color selector dialog
+      //printf("Color copied to clipboard.\n"); //is this really necessary tho?
+    }
     //This option will trigger open the native color picker on linux and windows too
     else if(strcmp(args[i], "-ncs") == 0 || strcmp(args[i], "--native_color_selector") == 0)
     {
@@ -168,6 +196,13 @@ static void CLIMain(int ac, char * args[])
         printf("Open Color Dialog Box\n");
       #endif
       NativeDlgColorBox();
+      char tmp[20];
+      sprintf(tmp, "%d %d %d", Rv, Gv, Bv);
+      printf("%s", tmp);
+      if(ncsClipboard)
+      {
+        Clipboard_copy(tmp);
+      }
     }
     //This will trigger the builtin color picker which can also scan colors from screen pixels too (like Microsoft's color picker from Windows power toys)
     //Todo...
@@ -190,7 +225,7 @@ static void CLIMain(int ac, char * args[])
       cmd_check = true;
       printf("Show saved color array...\n");
     }
-    //This hides the post debug message so you dodn't get annoyed all the time with "[ Success -> Conversion ] Color converted successfully!"
+    //This hides the post debug message so you don't get annoyed all the time with "[ Success -> Conversion ] Color converted successfully!"
     else if(strcmp(args[i], "-pcd") == 0 || strcmp(args[i], "--post_convert_debug") == 0)
     {
       cmd_check = true;
@@ -205,7 +240,7 @@ static void CLIMain(int ac, char * args[])
       {
         conversionState = true;
         GetChRGB2Hex = args[i + 1];
-        i++;
+        i++; //Move to the next argument
         //Scan for the assigned input from the second argument of the parameter
         sscanf(GetChRGB2Hex, "%hhd%hhd%hhd", &inRgb.R, &inRgb.G, &inRgb.B);
         //And convert the color
