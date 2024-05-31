@@ -1,3 +1,8 @@
+/*
+Function for managing the OS clipboard
+*/
+
+
 #include <stdio.h>
 
 #if defined _WIN32 || defined _WIN64
