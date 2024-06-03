@@ -1,2 +1,2 @@
-# Transform-Color
-The source code of the trcol command and the transColor library
+# Format-Color
+The source code of the formcolor command and the format color library
