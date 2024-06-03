@@ -1,2 +1,2 @@
 # Format-Color
-The source code of the formcolor command and the format color library
+The source code of the formcol command and the format color library
