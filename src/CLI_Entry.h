@@ -163,6 +163,8 @@ static void CLIMain(int ac, char * args[])
   for(int i = 1; i < ac; i++)
   {
     //MARK: Show Info on CMD
+    //Ooohh
+    //Those 2 generic CLI arguments
     if(strcmp(args[i], "-h") == 0 || strcmp(args[i], "--help") == 0)
     {
       cmd_check = true;
@@ -228,8 +230,7 @@ static void CLIMain(int ac, char * args[])
       if(i + 1 < ac)
       {
         GetFwca = args[i + 1];
-        //Write_color_array(GetFwca); //write the file
-        Write_Color_Array(GetFwca, 16, acrCustClr);
+        GetFilanameFromCLI(GetFwca); //Call this function to get the filename to write the color array file
       }
     }
     //This option will trigger open the native color picker on linux and windows too
@@ -239,10 +240,14 @@ static void CLIMain(int ac, char * args[])
       #ifdef DEBUG
         printf("Open Color Dialog Box\n");
       #endif
+                        //Settings from CLI
       NativeDlgColorBox(UseDefalutColorsNCS, SaveCustomColorArray); //show native color selector
+
       char tmp[20];
       sprintf(tmp, "%d %d %d", Rv, Gv, Bv);
       printf("%s", tmp);
+
+      //Only if true (From CLI option)
       if(ncsClipboard)
       {
         Clipboard_copy(tmp);
