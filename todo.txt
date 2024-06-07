@@ -1,6 +1,8 @@
 * * * * CLI_Entry.h * * * *
-  - Implement the -mcc command functionality
-  - Implement clipboard functionality on linux
-  - Automatic color format recognition
-  - Save color array from native color selector to a file (option)
-  - (Possible Rename) Format Color, CLI comand name "formcol"
+No   - Implement the -mcc command functionality
+No   - Implement clipboard functionality on linux
+No   - Automatic color format recognition
+Yes  - Save color array from native color selector to a file (option)
+
+* * * * Others * * * *
+Yes  - (Possible Rename) Format Color, CLI comand name "formcol"
