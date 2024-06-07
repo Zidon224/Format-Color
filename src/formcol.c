@@ -5,7 +5,7 @@
 #endif
 
 //MARK: Defined Macros
-//Enable this only in dev mode
+//Enable those macros only in dev mode
 //#define DEBUG_CLI_ENTRY
 //#define CLIPBOARD_DEBUG
 
