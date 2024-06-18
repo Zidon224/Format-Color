@@ -65,10 +65,14 @@ char *CLInfo =
 "\n"
 "{Short command} | {Long command}             | {Description}\n"
 "-cprint         | [null]                     | Print a color bar using RGB values. Enter the values in between \" \" or ' '\n"
+"-ncs            | --native_color_selector    | Triggers display of native color pickers\n"
+"In use with flags (syntax): -ncs: or --native_color_selector:\n"
+" - - - Optional flags - - -\n"
 "-udc            | --use_default_colors       | Use the defalut color array when opening the native color selector."
 "-ccp            | --color_copy               | Copy the color from the native color selector to clipboard\n"
 "-wca:           | --write_color_array        | Write the color array from the color selector to a file with INI structure  ! Requires a file path !\n"
-"-ncs            | --native_color_selector    | Triggers display of native color pickers\n"
+"\n"
+"\n"
 "-sdca           | --show_defalut_color_array | Show the default color array\n"
 "-acpk           | --advanced_color_picker    | Triggers the builtin color picker (Has custom user interface)\n"
 "-mcc:           | --multi_color_convert:     | Converts multiple colors from a format to another at once [Requires an input file path in between \" \" or ' ']\n"
@@ -108,8 +112,13 @@ bool ncsClipboard = false;
 bool UseDefalutColorsNCS = false;
 bool SaveCustomColorArray = false;
 bool SaveSettings = false;
+bool LoadColorArray = false;
 bool UseSavedCustomColorArray = true;
+bool NcsToggle = false;
+bool cprint;
 bool cmd_check;
+
+int stupidChecking = 0;
 
 
 //This may be kind of fucked LMFAO
@@ -121,7 +130,11 @@ char *GetChHEX2Hsl = NULL;
 char *GetChHEX2Rgb = NULL;
 char *GetFileInput = NULL;
 char *GetFwca = NULL;
+char *GetFlca = NULL;
 char *Temporarry = NULL;
+
+//char *arg1[10] = { 0 };
+//char *arg2[10] = { 0 };
 
 //and this 1 too :)))
 RGB inRgb;
@@ -185,117 +198,8 @@ static void CLIMain(int ac, char * args[])
       cmd_check = true;
       printf("%s \n", Defaults);
     }
-    //idk if should I completely cancel this XD
-    //MARK: CLI debug test
-    else if(strcmp(args[i], "-dbg_test") == 0)
-    {
-      #ifdef DEBUG_CLI_ENTRY
-        DebugTest();
-      #else
-        Err("CLI input", "Option not available!");
-      #endif
-    }
-    //Not yet
-    else if(strcmp(args[i], "-lcs") == 0 || strcmp(args[i], "--license") == 0)
-    {
-      cmd_check = true;
-      printf("License: ... \n");
-    }
-    else if(strcmp(args[i], "-cprint:") == 0)
-    {
-      cmd_check = true;
-      if(i + 1 < ac)
-      {
-        GetChRGB2Hex = args[i + 1];
-        uint8_t tR, tG, tB;
-        sscanf(GetChRGB2Hex, "%hhd %hhd %hhd", &tR, &tG, &tB);
-        printColor(1, tR, tG, tB);
-      }
-    }
-    else if(strcmp(args[i], "-udc") == 0 || strcmp(args[i], "--use_defalut_colors") == 0)
-    {
-      cmd_check = true;
-      UseDefalutColorsNCS = true;
-    }
-    else if(strcmp(args[i], "-ccp") == 0 || strcmp(args[i], "--color_copy") == 0)
-    {
-      cmd_check = true;
-      ncsClipboard = true; //Enables the copy to clipboard of the selected color from the native color selector dialog
-    }
-    //Write files containing the color array saved from custom colors (Windows color selector) as ini structure
-    else if(strcmp(args[i], "-wca:") == 0 || strcmp(args[i], "--write_color_array:") == 0)
-    {
-      cmd_check = true;
-      SaveCustomColorArray = true;
-      if(i + 1 < ac)
-      {
-        GetFwca = args[i + 1];
-        GetFilanameFromCLI(GetFwca); //Call this function to get the filename to write the color array file
-      }
-    }
-    //This option will trigger open the native color picker on linux and windows too
-    else if(strcmp(args[i], "-ncs") == 0 || strcmp(args[i], "--native_color_selector") == 0)
-    {
-      cmd_check = true;
-      #ifdef DEBUG
-        printf("Open Color Dialog Box\n");
-      #endif
-                        //Settings from CLI
-      NativeDlgColorBox(UseDefalutColorsNCS, SaveCustomColorArray); //show native color selector
-
-      char tmp[20];
-      sprintf(tmp, "%d %d %d", Rv, Gv, Bv);
-      printf("%s", tmp);
-
-      //Only if true (From CLI option)
-      if(ncsClipboard)
-      {
-        Clipboard_copy(tmp);
-      }
-    }
-    //Show the default color array used in the native color selector dialog
-    else if(strcmp(args[i], "-sdca") == 0 || strcmp(args[i], "--show_default_color_array") == 0)
-    {
-      cmd_check = true;
-      for(int i = 0; i < 16; i++)
-      {
-        //Get to all 16 colors with their values as R G B (defined in color_dlg_box.h)
-        R = DefaultCustomColors[i][0];
-        G = DefaultCustomColors[i][1];
-        B = DefaultCustomColors[i][2];
-        printColor(0, R, G, B); //Print the color from the array
-        printf(" | Color: %d | R= %d | G= %d | B= %d\n", i, R, G, B); //Then the color values as RGB
-      }
-    }
-    //This will trigger the builtin color picker which can also scan colors from screen pixels too (like Microsoft's color picker from Windows power toys)
-    //Todo...
-    else if(strcmp(args[i], "-acpk") == 0 || strcmp(args[i], "--advanced_color_picker") == 0)
-    {
-      cmd_check = true;
-      printf("Advanced color picker...\n To be inmplemented...\n");
-    }
-    //This prevents the colored bar from being displayed after conversion
-    //Idk why someone would like to disable this feature but I decided to add it tho. LoL
-    else if(strcmp(args[i], "-dsc") == 0 || strcmp(args[i], "--disable_show_color") == 0)
-    {
-      cmd_check = true;
-      ShowColor = false;
-    }
-    //Not sure what can I do with this
-    //Any other ideeas are good too
-    else if(strcmp(args[i], "-sca") == 0 || strcmp(args[i], "--show_color_array") == 0)
-    {
-      cmd_check = true;
-      printf("Show saved color array...\n");
-    }
-    //This hides the post debug message so you don't get annoyed all the time with "[ Success -> Conversion ] Color converted successfully!"
-    else if(strcmp(args[i], "-pcd") == 0 || strcmp(args[i], "--post_convert_debug") == 0)
-    {
-      cmd_check = true;
-      postConvDebug = true;
-    }
     //And from here we have the actuall conversion commands
-    //MARK: Converts commands
+    //MARK: Color Converters
     else if(strcmp(args[i], "-rgb2hex:") == 0)
     {
       //Check if the secondary argument was provided to the parameter
@@ -310,8 +214,8 @@ static void CLIMain(int ac, char * args[])
         RGB2HEX(inRgb, &outRgbh);
         //Then print it to the stdout
         printRGBH(outRgbh);
-        //Print characters as blocks with true RGB (24 bits) color only if this option is enabled
-        //Function defined at line 97
+        //Print characters as blocks (U+2588) with true RGB (24 bits) color only if this option is enabled
+        //Function defined at line 151
         if(ShowColor)
         {
           printColor(1, inRgb.R, inRgb.G, inRgb.B);
@@ -491,9 +395,73 @@ static void CLIMain(int ac, char * args[])
       }
       cmd_check = true;
     }
+    //Not yet
+    else if(strcmp(args[i], "-lcs") == 0 || strcmp(args[i], "--license") == 0)
+    {
+      cmd_check = true;
+      printf("License: ... \n");
+    }
+    //MARK: Misc commands
+    //Show the default color array used in the native color selector dialog
+    else if(strcmp(args[i], "-cprint:") == 0)
+    {
+      cmd_check = true;
+
+      //WHAT A FUCKING MESS
+      stupidChecking = 3; //Bullshit
+      cprint = true; //Bullshit2
+      //Failed attempt
+      //NcsToggle = false; // Prevent the native color selector from showing up when this command is applied
+      if(i + 1 < ac)
+      {
+        GetChRGB2Hex = args[i + 1];
+        uint8_t tR, tG, tB;
+        sscanf(GetChRGB2Hex, "%hhd %hhd %hhd", &tR, &tG, &tB);
+        printColor(1, tR, tG, tB);
+      }
+    }
+    else if(strcmp(args[i], "-sdca") == 0 || strcmp(args[i], "--show_default_color_array") == 0)
+    {
+      cmd_check = true;
+      for(int i = 0; i < 16; i++)
+      {
+        //Get to all 16 colors with their values as R G B (defined in color_dlg_box.h)
+        R = DefaultCustomColors[i][0];
+        G = DefaultCustomColors[i][1];
+        B = DefaultCustomColors[i][2];
+        printColor(0, R, G, B); //Print the color from the array
+        printf(" | Color: %d | R= %d | G= %d | B= %d\n", i, R, G, B); //Then the color values as RGB
+      }
+    }
+    //This will trigger the builtin color picker which can also scan colors from screen pixels too (like Microsoft's color picker from Windows power toys)
+    //Todo...
+    else if(strcmp(args[i], "-acpk") == 0 || strcmp(args[i], "--advanced_color_picker") == 0)
+    {
+      cmd_check = true;
+      printf("Advanced color picker...\n To be inmplemented...\n");
+    }
+    //This prevents the colored bar from being displayed after conversion
+    //Idk why someone would like to disable this feature but I decided to add it tho. LoL
+    else if(strcmp(args[i], "-dsc") == 0 || strcmp(args[i], "--disable_show_color") == 0)
+    {
+      cmd_check = true;
+      ShowColor = false;
+    }
+    //Not sure what can I do with this
+    //Any other ideeas are good too
+    else if(strcmp(args[i], "-sca") == 0 || strcmp(args[i], "--show_color_array") == 0)
+    {
+      cmd_check = true;
+      printf("Show saved color array...\n");
+    }
+    //This hides the post debug message so you don't get annoyed all the time with "[ Success -> Conversion ] Color converted successfully!"
+    else if(strcmp(args[i], "-pcd") == 0 || strcmp(args[i], "--post_convert_debug") == 0)
+    {
+      cmd_check = true;
+      postConvDebug = true;
+    }
     //With this command the user can convert multiple colors at the same time from a format to another using json structure
     //Todo...
-    //MARK: Misc commands
     else if(strcmp(args[i], "-mcc:") == 0 || strcmp(args[i], "--multi_color_convert:") == 0)
     {
       if(i + 1 < ac)
@@ -507,6 +475,57 @@ static void CLIMain(int ac, char * args[])
         Err("Multi color convert", "Missing filename!");
       }
       cmd_check = true;
+    }
+    //This option will trigger open the native color picker on linux and windows too
+    else if(strcmp(args[i], "-ncs") == 0 || strcmp(args[i], "--native_color_selector") == 0 || strcmp(args[i], "-ncs:") == 0 || strcmp(args[i], "--native_color_selector:"))
+    {
+      cmd_check = true;
+      //NcsToggle = true;
+      //stupidChecking = 2;
+      if(cprint)
+      {
+        stupidChecking = 0;
+      }
+      else
+      {
+        stupidChecking = 2;
+      }
+      
+      #ifdef DEBUG
+        printf("Open Color Dialog Box\n");
+      #endif
+    }
+    //And its flags (udc , ccp, lca, wca)
+    else if(strcmp(args[i], "-udc") == 0 || strcmp(args[i], "--use_defalut_colors") == 0)
+    {
+      cmd_check = true;
+      UseDefalutColorsNCS = true;
+    }
+    else if(strcmp(args[i], "-ccp") == 0 || strcmp(args[i], "--color_copy") == 0)
+    {
+      cmd_check = true;
+      ncsClipboard = true; //Enables the copy to clipboard of the selected color from the native color selector dialog
+    }
+    else if(strcmp(args[i], "-lca=") == 0 || strcmp(args[i], "--load_color_array=") == 0)
+    {
+      cmd_check = true;
+      LoadColorArray = true;
+      if(i + 1 < ac)
+      {
+        GetFlca = args[i + 1];
+        GetFilanameFromCLI(GetFlca);
+      }
+    }
+    //Write files containing the color array saved from custom colors (Windows color selector) as ini structure
+    else if(strcmp(args[i], "-wca=") == 0 || strcmp(args[i], "--write_color_array=") == 0)
+    {
+      cmd_check = true;
+      SaveCustomColorArray = true;
+      if(i + 1 < ac)
+      {
+        GetFwca = args[i + 1];
+        GetFilanameFromCLI(GetFwca); //Call this function to get the filename to write the color array file
+      }
     }
     //Only for testing purposes!!
     else if(strcmp(args[i], "-cpb:") == 0)
@@ -523,11 +542,40 @@ static void CLIMain(int ac, char * args[])
       #endif
       cmd_check = true;
     }
+    //idk if should I completely cancel this XD
+    //MARK: CLI debug test
+    else if(strcmp(args[i], "-dbg_test") == 0)
+    {
+      #ifdef DEBUG_CLI_ENTRY
+        DebugTest();
+      #else
+        Err("CLI input", "Option not available!");
+      #endif
+    }
     if(!cmd_check)
     {
       char temp[100];
       sprintf(temp, "Unknown argument %s", args[i]);
       Err("CLI", temp);
+    }
+  }
+
+  //Oohoh boy that was fucking hard to solve
+  //Imagine using the -cprint command and without even wanting the native color selector shows up. Like WTFF
+  //If anyone knows a better solution or a way to do it pls let me know
+  //thx
+  if(stupidChecking == 2)
+  {
+                      //Settings from CLI
+    NativeDlgColorBox(UseDefalutColorsNCS, SaveCustomColorArray, LoadColorArray); //show native color selector
+    char tmp[20];
+    sprintf(tmp, "%d %d %d", Rv, Gv, Bv);
+    printf("%s", tmp);
+
+    //Only if true (From CLI option)
+    if(ncsClipboard)
+    {
+      Clipboard_copy(tmp);
     }
   }
 
